@@ -1,5 +1,8 @@
 # NotesApp
 
+**Student:** Xu Jiexiang (Kane)
+**Student ID:** 2023901702
+
 A small grades application used throughout the Computer Security course. Teachers
 record grades and comments for their classes, students read their own grades, and an
 admin manages users and classes.
