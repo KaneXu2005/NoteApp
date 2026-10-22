@@ -13,6 +13,8 @@ import base64
 import hashlib
 import subprocess
 
+from crypto_utils import encrypt_comment, decrypt_comment, decrypt_rows
+
 import psycopg2
 import psycopg2.extras
 from flask import (
@@ -193,7 +195,7 @@ def dashboard():
         "WHERE n.student_id = %s ORDER BY c.name",
         (session["user_id"],),
     )
-    notes = cur.fetchall()
+    notes = decrypt_rows(cur.fetchall())
     conn.close()
     return render_template("dashboard.html", notes=notes, token=session.get("token"))
 
@@ -219,6 +221,7 @@ def api_notes(note_id):
     if not note:
         return jsonify({"error": "not found"}), 404
     note["grade"] = float(note["grade"]) if note["grade"] is not None else None
+    note["comment"] = decrypt_comment(note["comment"], note["id"])
     return jsonify(note)
 
 
@@ -237,7 +240,7 @@ def teacher():
         "FROM notes n JOIN users u ON u.id = n.student_id "
         "JOIN classes c ON c.id = n.class_id ORDER BY c.name, u.username"
     )
-    notes = cur.fetchall()
+    notes = decrypt_rows(cur.fetchall())
     cur.execute("SELECT id, username FROM users WHERE role = 'student' ORDER BY username")
     students = cur.fetchall()
     conn.close()
@@ -254,20 +257,32 @@ def grades():
     class_id = request.form.get("class_id")
     grade = request.form.get("grade")
     comment = request.form.get("comment", "")
-    conn = get_db()
-    cur = conn.cursor()
     if note_id:
-        cur.execute(
-            "UPDATE notes SET grade = %s, comment = %s WHERE id = %s",
-            (grade, comment, note_id),
-        )
-    else:
-        cur.execute(
-            "INSERT INTO notes (student_id, class_id, grade, comment) "
-            "VALUES (%s, %s, %s, %s)",
-            (student_id, class_id, grade, comment),
-        )
-    conn.close()
+        try:
+            note_id = int(note_id)
+        except ValueError:
+            abort(400)
+    conn = get_db()
+    conn.autocommit = False
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                if note_id:
+                    cur.execute(
+                        "UPDATE notes SET grade = %s, comment = %s WHERE id = %s",
+                        (grade, encrypt_comment(comment, note_id), note_id),
+                    )
+                else:
+                    cur.execute(
+                        "INSERT INTO notes (student_id, class_id, grade) "
+                        "VALUES (%s, %s, %s) RETURNING id",
+                        (student_id, class_id, grade),
+                    )
+                    note_id = cur.fetchone()["id"]
+                    cur.execute("UPDATE notes SET comment = %s WHERE id = %s",
+                                (encrypt_comment(comment, note_id), note_id))
+    finally:
+        conn.close()
     log(f"grade write by {session.get('username')} note_id={note_id or 'new'}")
     return redirect(url_for("teacher"))
 
@@ -281,7 +296,7 @@ def export_csv():
     cur = conn.cursor()
     if class_id:
         cur.execute(
-            "SELECT u.username AS student, c.name AS class, n.grade, n.comment "
+            "SELECT n.id, u.username AS student, c.name AS class, n.grade, n.comment "
             "FROM notes n JOIN users u ON u.id = n.student_id "
             "JOIN classes c ON c.id = n.class_id WHERE n.class_id = %s "
             "ORDER BY u.username",
@@ -289,11 +304,11 @@ def export_csv():
         )
     else:
         cur.execute(
-            "SELECT u.username AS student, c.name AS class, n.grade, n.comment "
+            "SELECT n.id, u.username AS student, c.name AS class, n.grade, n.comment "
             "FROM notes n JOIN users u ON u.id = n.student_id "
             "JOIN classes c ON c.id = n.class_id ORDER BY c.name, u.username"
         )
-    rows = cur.fetchall()
+    rows = decrypt_rows(cur.fetchall())
     conn.close()
     buf = io.StringIO()
     writer = csv.writer(buf)

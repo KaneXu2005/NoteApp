@@ -1,0 +1,9 @@
+# Local verification overlay: keep the deliberately vulnerable app on loopback,
+# use a separate project/volume, and do not grant it access to the Docker host.
+services:
+  db:
+    ports: !reset []
+  web:
+    ports: !override
+      - "127.0.0.1:8080:5000"
+    volumes: !reset []
