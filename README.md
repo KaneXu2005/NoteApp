@@ -4,6 +4,12 @@ A small grades application used throughout the Computer Security course. Teacher
 record grades and comments for their classes, students read their own grades, and an
 admin manages users and classes.
 
+## Course work (Sessions 03–05)
+
+See [course completion and evidence](docs/course-work.md) for the staged work,
+local HTTPS startup, tests, and remaining teaching vulnerabilities. Before starting
+this version, run `python3 scripts/setup_secrets.py` to create the ignored local keys.
+
 ## Run it
 
 You need Docker with the Compose plugin.

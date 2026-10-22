@@ -1,0 +1,27 @@
+[
+  {
+    "user": "alice",
+    "path": "/dashboard",
+    "status": 200
+  },
+  {
+    "user": "alice",
+    "path": "/api/notes/1",
+    "status": 200
+  },
+  {
+    "user": "prof.turing",
+    "path": "/teacher",
+    "status": 200
+  },
+  {
+    "user": "prof.turing",
+    "path": "/export.csv?class_id=1",
+    "status": 200
+  },
+  {
+    "user": "admin",
+    "path": "/admin",
+    "status": 200
+  }
+]
