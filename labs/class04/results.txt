@@ -1,0 +1,4 @@
+PASS: SHA-256 is deterministic; editing the grade changes the hash and HMAC.
+Toy RSA: 42 -> 2557 -> 42 (educational only; no padding).
+PASS: RSA-PSS authentic signature verified; changed grade rejected.
+HMAC authenticates shared-key possession; it does not distinguish holders or give non-repudiation.

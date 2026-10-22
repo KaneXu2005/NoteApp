@@ -14,6 +14,7 @@ import hashlib
 import subprocess
 
 from crypto_utils import encrypt_comment, decrypt_comment, decrypt_rows
+from export_integrity import sign_export
 
 import psycopg2
 import psycopg2.extras
@@ -316,7 +317,7 @@ def export_csv():
     for r in rows:
         writer.writerow([r["student"], r["class"], r["grade"], r["comment"]])
     return Response(
-        buf.getvalue(), mimetype="text/csv",
+        sign_export(buf.getvalue().encode("utf-8")), mimetype="text/csv",
         headers={"Content-Disposition": "attachment; filename=grades.csv"},
     )
 
