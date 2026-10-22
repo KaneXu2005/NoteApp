@@ -9,7 +9,7 @@
 services:
   web:
     # Stop publishing the app port directly; nginx fronts it instead.
-    ports: []
+    ports: !reset []
     expose:
       - "5000"
 

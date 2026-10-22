@@ -1,0 +1,35 @@
+{
+  "host": "github.com",
+  "issuer": [
+    [
+      [
+        "countryName",
+        "GB"
+      ]
+    ],
+    [
+      [
+        "organizationName",
+        "Sectigo Limited"
+      ]
+    ],
+    [
+      [
+        "commonName",
+        "Sectigo Public Server Authentication CA DV E36"
+      ]
+    ]
+  ],
+  "subject": [
+    [
+      [
+        "commonName",
+        "github.com"
+      ]
+    ]
+  ],
+  "notBefore": "Sep  1 00:00:00 2026 GMT",
+  "notAfter": "Nov 29 23:59:59 2026 GMT",
+  "tls": "TLSv1.3",
+  "system_trust_verified": true
+}

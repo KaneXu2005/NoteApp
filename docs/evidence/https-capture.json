@@ -1,0 +1,10 @@
+{
+  "mode": "https",
+  "capture_point": "notesapp-course-nginx-1 eth0 TCP 443",
+  "login_final_status": 200,
+  "capture_bytes": 18183,
+  "sha256": "41430201d2937729a0c3bd1707fc685895d2972a3b01eed1a49598826dbd6078",
+  "test_credentials_visible_in_capture": false,
+  "credential_excerpt": null,
+  "method": "tcpdump packet capture; HTTPS validated against the explicit local certificate, not -k"
+}

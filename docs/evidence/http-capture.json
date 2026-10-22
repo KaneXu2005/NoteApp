@@ -1,0 +1,10 @@
+{
+  "mode": "http",
+  "capture_point": "notesapp-course-web-1 eth0 TCP 5000",
+  "login_final_status": 200,
+  "capture_bytes": 5537,
+  "sha256": "30c983b68d053b4fb18714abf15cee096a485ff69df6a9a168d26d896e9716cc",
+  "test_credentials_visible_in_capture": true,
+  "credential_excerpt": "username=alice&password=alicepw",
+  "method": "tcpdump packet capture; HTTPS validated against the explicit local certificate, not -k"
+}
