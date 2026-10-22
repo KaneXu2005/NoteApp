@@ -1,0 +1,13 @@
+Ciphertext: Kyv jvtlizkp fw r jpjkvd uvgveuj fe trivwlc uvjzxe reu ivxlcri kvjkzex. Gvfgcv jyflcu gifkvtk kyvzi grjjnfiuj reu bvvg gizmrkv zewfidrkzfe jrwv. Vetipgkzfe gifkvtkj kyv tfekvekj fw r dvjjrxv nyzcv rlkyvekztrkzfe tyvtbj kyv zuvekzkp fw zkj jveuvi. R jvtivk bvp dljk sv jkfivu jvgrirkvcp wifd kyv vetipgkvu urkr. Kyzj vordgcv tfekrzej veflxy fiuzerip Vexczjy kvok kf uvdfejkirkv yfn cvkkvi wivhlvetzvj tre ivmvrc r jzdgcv jlsjkzklkzfe.
+Candidate key=17, chi-square=32.54
+The security of a system depends on careful design and regular testing. People should protect their passwords and keep private information safe. Encryption protects the contents of a message while authentication checks the identity of its sender. A secret key must be stored separately from the encrypted data. This example contains enough ordinary English text to demonstrate how letter frequencies can reveal a simple substitution.
+Candidate key=2, chi-square=1289.35
+Iwt htrjgxin du p hnhitb stetcsh dc rpgtuja sthxvc pcs gtvjapg ithixcv. Etdeat hwdjas egditri iwtxg ephhldgsh pcs ztte egxkpit xcudgbpixdc hput. Tcrgneixdc egditrih iwt rdcitcih du p bthhpvt lwxat pjiwtcixrpixdc rwtrzh iwt xstcixin du xih htcstg. P htrgti ztn bjhi qt hidgts htepgpitan ugdb iwt tcrgneits spip. Iwxh tmpbeat rdcipxch tcdjvw dgsxcpgn Tcvaxhw itmi id stbdchigpit wdl atiitg ugtfjtcrxth rpc gtktpa p hxbeat hjqhixijixdc.
+Candidate key=4, chi-square=1349.13
+Gur frphevgl bs n flfgrz qrcraqf ba pnershy qrfvta naq erthyne grfgvat. Crbcyr fubhyq cebgrpg gurve cnffjbeqf naq xrrc cevingr vasbezngvba fnsr. Rapelcgvba cebgrpgf gur pbagragf bs n zrffntr juvyr nhguragvpngvba purpxf gur vqragvgl bs vgf fraqre. N frperg xrl zhfg or fgberq frcnengryl sebz gur rapelcgrq qngn. Guvf rknzcyr pbagnvaf rabhtu beqvanel Ratyvfu grkg gb qrzbafgengr ubj yrggre serdhrapvrf pna erirny n fvzcyr fhofgvghgvba.
+PASS: recovered the example without supplying the key; all 26 round trips passed.
+原图： /Users/majorkan3/Documents/NoteApp/repo/labs/session03/task2_output/original.png
+图片尺寸：(512, 384)；原始 RGB 像素：589824 字节
+ECB 和 GCM 均成功还原原始像素
+GCM 成功拒绝被篡改的密文
+对比图： /Users/majorkan3/Documents/NoteApp/repo/labs/session03/task2_output/comparison.png
