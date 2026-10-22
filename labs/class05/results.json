@@ -1,0 +1,27 @@
+{
+  "platform": "Linux-7.0.14-linuxkit-aarch64-with-glibc2.41",
+  "python": "3.11.17",
+  "wordlist_entries": 170,
+  "cracked": {
+    "liwei": "123456",
+    "aisha": "password1",
+    "tomk": "qwerty123",
+    "sofia": "iloveyou"
+  },
+  "held_out": [
+    "marie",
+    "raj"
+  ],
+  "dictionary_elapsed_ms": 0.08866697316989303,
+  "md5_guesses_per_second": 4320470.927875476,
+  "argon2_guesses_per_second": 51.90344998378632,
+  "md5_guesses_per_day": 373288688168.4411,
+  "argon2_guesses_per_day": 4484458.078599138,
+  "slowdown_ratio": 83240.53467014451,
+  "argon2_parameters": {
+    "time_cost": 3,
+    "memory_cost_kib": 65536,
+    "parallelism": 4
+  },
+  "method": "median of 5 runs: MD5 100000 hashes per run; Argon2 one failed verification per run; sequential CPU estimates"
+}

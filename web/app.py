@@ -15,6 +15,7 @@ import subprocess
 
 from crypto_utils import encrypt_comment, decrypt_comment, decrypt_rows
 from export_integrity import sign_export
+from passwords import ph, verify_password
 
 import psycopg2
 import psycopg2.extras
@@ -150,8 +151,8 @@ def login():
         password = request.form.get("password", "")
         # Flaw #8: SQL injection. Query built by string concatenation, no params.
         query = (
-            "SELECT id, username, role FROM users "
-            "WHERE username = '" + username + "' AND password = '" + password + "'"
+            "SELECT id, username, role, password FROM users "
+            "WHERE username = '" + username + "'"
         )
         conn = get_db()
         cur = conn.cursor()
@@ -162,8 +163,22 @@ def login():
             # Keep the raw error visible - helps the SQLi session.
             error = f"Query error: {e}"
             row = None
-        conn.close()
-        if row:
+        authenticated = False
+        try:
+            if row:
+                authenticated, replacement = verify_password(row["password"], password)
+                if authenticated and replacement:
+                    # Compare-and-swap prevents overwriting a concurrent password change.
+                    cur.execute(
+                        "UPDATE users SET password = %s WHERE id = %s AND password = %s",
+                        (replacement, row["id"], row["password"]),
+                    )
+                    authenticated = cur.rowcount == 1
+                    if authenticated:
+                        log(f"password upgraded user={row['username']}")
+        finally:
+            conn.close()
+        if authenticated:
             session["user_id"] = row["id"]
             session["username"] = row["username"]
             session["role"] = row["role"]
@@ -387,7 +402,7 @@ def admin_users():
         cur.execute(
             "INSERT INTO users (username, password, role, teacher_id) "
             "VALUES (%s, %s, %s, %s)",
-            (request.form.get("username"), request.form.get("password"),
+            (request.form.get("username"), ph.hash(request.form.get("password", "")),
              request.form.get("role", "student"), None),
         )
     elif action == "delete":
