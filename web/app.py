@@ -30,7 +30,9 @@ DB_HOST = os.environ.get("DB_HOST", "db")
 DB_NAME = os.environ.get("DB_NAME", "notesapp")
 DB_USER = os.environ.get("DB_USER", "notesapp")
 DB_PASSWORD = os.environ.get("POSTGRES_PASSWORD", "notesapp_pg_pw_2024")
-JWT_SECRET = os.environ.get("JWT_SECRET", "s3cr3t")
+JWT_SECRET = os.environ.get("JWT_SECRET", "")
+if len(JWT_SECRET.encode("utf-8")) < 32:
+    raise ValueError("JWT_SECRET must be at least 32 bytes; run scripts/setup_secrets.py")
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-session-key")
 
 app = Flask(__name__)
@@ -59,7 +61,7 @@ def get_db():
     return conn
 
 
-# --- Minimal JWT (deliberately weak) ------------------------------------------
+# --- Minimal JWT (HS256 only) -------------------------------------------------
 def _b64url(data: bytes) -> str:
     return base64.urlsafe_b64encode(data).rstrip(b"=").decode()
 
@@ -79,14 +81,10 @@ def make_jwt(payload: dict) -> str:
 
 
 def verify_jwt(token: str):
-    """Decode a JWT. Accepts alg:none (no signature) and HS256 with a short key.
-
-    This is intentionally broken (flaw #4): an attacker can forge any identity
-    by setting "alg":"none", and the HS256 key is trivially guessable.
-    """
+    """Accept only HS256 tokens authenticated with the configured signing key."""
     try:
         h_b64, p_b64, sig_b64 = token.split(".")
-    except ValueError:
+    except (ValueError, AttributeError):
         return None
     try:
         header = json.loads(_b64url_decode(h_b64))
@@ -94,16 +92,15 @@ def verify_jwt(token: str):
     except Exception:
         return None
 
-    alg = header.get("alg", "").lower()
-    if alg == "none":
-        # No signature verification at all.
-        return payload
-    if alg == "hs256":
-        signing_input = f"{h_b64}.{p_b64}".encode()
-        expected = _b64url(hmac.new(JWT_SECRET.encode(), signing_input, hashlib.sha256).digest())
-        if hmac.compare_digest(expected, sig_b64):
-            return payload
+    if not isinstance(header, dict) or not isinstance(payload, dict):
         return None
+    if header.get("alg") != "HS256":
+        return None
+    signing_input = f"{h_b64}.{p_b64}".encode()
+    expected = _b64url(hmac.new(JWT_SECRET.encode(), signing_input, hashlib.sha256).digest())
+    # Non-ASCII signatures are malformed and compare_digest would raise on them.
+    if sig_b64.isascii() and hmac.compare_digest(expected, sig_b64):
+        return payload
     return None
 
 
@@ -112,8 +109,7 @@ def current_identity():
     auth = request.headers.get("Authorization", "")
     if auth.startswith("Bearer "):
         payload = verify_jwt(auth[7:].strip())
-        if payload:
-            return payload
+        return payload
     if "user_id" in session:
         return {"user_id": session["user_id"], "username": session.get("username"),
                 "role": session.get("role")}
@@ -182,7 +178,7 @@ def login():
             session["user_id"] = row["id"]
             session["username"] = row["username"]
             session["role"] = row["role"]
-            # Issue a weak JWT the dashboard uses to call the API.
+            # Issue an HS256 JWT the dashboard uses to call the API.
             session["token"] = make_jwt({
                 "user_id": row["id"], "username": row["username"], "role": row["role"],
             })
@@ -225,7 +221,7 @@ def api_notes(note_id):
     conn = get_db()
     cur = conn.cursor()
     # Flaw #7 (IDOR): the owner of the note is never checked. Any authenticated
-    # caller can read any note id. Flaw #4: `ident` may come from a forged token.
+    # caller can read any note id.
     cur.execute(
         "SELECT n.id, n.student_id, n.class_id, n.grade, n.comment, "
         "u.username AS student, c.name AS class_name "

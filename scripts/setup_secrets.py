@@ -7,7 +7,7 @@ root = Path(__file__).resolve().parents[1]
 p = root / '.env'
 existing = p.read_text() if p.exists() else ''
 names = {line.split('=',1)[0].strip() for line in existing.splitlines() if '=' in line}
-missing = [n for n in ('COMMENT_KEY_B64','EXPORT_HMAC_KEY_B64') if n not in names]
+missing = [n for n in ('COMMENT_KEY_B64','EXPORT_HMAC_KEY_B64','JWT_SECRET') if n not in names]
 if missing:
     fd = os.open(p, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
     with os.fdopen(fd,'w') as f:
